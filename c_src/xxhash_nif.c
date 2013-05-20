@@ -131,7 +131,7 @@ static int init(ErlNifEnv *env, void* *priv_data, ERL_NIF_TERM load_info) {
   UNUSED(load_info);
   atom_ok = enif_make_atom(env, "ok");
 
-  if ((xxhash_handle = enif_open_resource_type(env, "xxhash_nif",
+  if ((xxhash_handle = enif_open_resource_type(env, "xxhash",
         "xxhash_handle", &xxhash_cleanup,
         ERL_NIF_RT_CREATE | ERL_NIF_RT_TAKEOVER, NULL)) == NULL) {
     return -1;
