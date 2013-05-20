@@ -3,5 +3,5 @@
 *.beam
 .DS*
 .eunit
-priv
 ebin
+*.so
