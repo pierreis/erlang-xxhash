@@ -14,13 +14,19 @@
 
 -on_load(init/0).
 
--spec init() -> ok | {error, any()}.
-
 -define(nif_stub, nif_stub_error(?LINE)).
+
+-type hash_input() :: binary() | atom() | number() | list().
+-type hash_handle() :: binary().
+-type hash_digest() :: non_neg_integer().
+-type hash_seed() :: non_neg_integer().
+
+
 nif_stub_error(Line) ->
     erlang:nif_error({nif_not_loaded, module, ?MODULE, line, Line}).
 
 
+-spec init() -> ok | {error, any()}.
 init() ->
     PrivDir = case code:priv_dir(?MODULE) of
                   {error, bad_name} ->
@@ -58,23 +64,66 @@ hash32_final_impl(_Context) ->
 %%% Exports
 %%%=============================================================================
 
+%% @doc Hash `Data' with a default seed value, and return the digest.
+%% @see hash32/2
+
+-spec hash32(hash_input()) -> hash_digest().
+
 hash32(Data) ->
   hash32(Data, ?DEFAULT_SEED).
+
+
+%% @doc Hash `Data' with `Seed' value, and return the digest.
+%% @see hash32/1
+
+-spec hash32(hash_input(), hash_seed()) -> hash_digest().
 
 hash32(Data, Seed) when is_integer(Seed) ->
   hash32_impl(supported_to_binary(Data), Seed).
 
+
+%% @doc Initialize a hasher with a default seed value, and return an handle.
+%% @see hash32_init/1
+
+-spec hash32_init() -> hash_handle().
+
 hash32_init() ->
   hash32_init(?DEFAULT_SEED).
+
+
+%% @doc Initialize a hasher with `Seed' value, and return an handle.
+%% @see hash32_init/0
+
+-spec hash32_init(hash_seed()) -> hash_handle().
 
 hash32_init(Seed) when is_integer(Seed) ->
   hash32_init_impl(Seed).
 
+
+%% @doc Update the `Context' hasher content with the given `Data'. This can be
+%%      called many times with new data as it is streamed.
+
+-spec hash32_update(hash_handle(), hash_input()) -> ok.
+
 hash32_update(Context, Data) when is_binary(Context) ->
   hash32_update_impl(Context, supported_to_binary(Data)).
 
+
+%% @doc Calculates an intermediate digest of all the passed data to the
+%%      `Context' hasher. Unlike {@link hash32_final/1}, the hasher can still
+%%      be used after {@link hash32_digest/1} has been called.
+
+-spec hash32_digest(hash_handle()) -> hash_digest().
+
 hash32_digest(Context) when is_binary(Context) ->
   hash32_digest_impl(Context).
+
+
+%% @doc Calculates the final hash of all the passed data to the `Context'
+%%      hasher. Unlike {@link hash32_digest/1}, the hasher is destroyed and
+%%      can't be used after {@link hash32_final/1} has been called.
+
+-spec hash32_final(hash_handle()) -> hash_digest().
 
 hash32_final(Context) when is_binary(Context) ->
   hash32_final_impl(Context).
