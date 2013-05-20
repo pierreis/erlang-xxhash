@@ -10,7 +10,7 @@
 
 -export([hash32/1, hash32/2,
          hash32_init/0, hash32_init/1,
-         hash32_update/2, hash32_final/1]).
+         hash32_update/2, hash32_digest/1, hash32_final/1]).
 
 -on_load(init/0).
 
@@ -47,6 +47,9 @@ hash32_init_impl(_Seed) ->
 hash32_update_impl(_Context, _Data) ->
   ?nif_stub.
 
+hash32_digest_impl(_Context) ->
+  ?nif_stub.
+
 hash32_final_impl(_Context) ->
   ?nif_stub.
 
@@ -70,6 +73,8 @@ hash32_init(Seed) when is_integer(Seed) ->
 hash32_update(Context, Data) when is_binary(Context) ->
   hash32_update_impl(Context, supported_to_binary(Data)).
 
+hash32_digest(Context) when is_binary(Context) ->
+  hash32_digest_impl(Context).
 
 hash32_final(Context) when is_binary(Context) ->
   hash32_final_impl(Context).
@@ -114,6 +119,23 @@ hash32_seed_test() ->
   ok = hash32_update(Handle, <<"Bar">>),
   Hash2 = hash32_final(Handle),
   ?assertEqual(Hash1, Hash2).
+
+hash32_intermediate_result_test() ->
+  Handle = hash32_init(50),
+  ok = hash32_update(Handle, <<"Foo">>),
+  Hash1 = hash32_digest(Handle),
+  ok = hash32_update(Handle, <<"Bar">>),
+  Hash2 = hash32_final(Handle),
+  ?assertNot(Hash1 == Hash2).
+
+hash32_overlapping_handles_test() ->
+  Handle1 = hash32_init(50),
+  Handle2 = hash32_init(50),
+  ok = hash32_update(Handle1, <<"Foo">>),
+  ok = hash32_update(Handle2, <<"Bar">>),
+  Hash1 = hash32_final(Handle1),
+  Hash2 = hash32_final(Handle2),
+  ?assertNot(Hash1 == Hash2).
 
 hash32_seed2_test() ->
   Hash1 = hash32(<<"FooBar">>, 50),
