@@ -1,0 +1,4 @@
+*.o
+.ebin
+*.beam
+.DS*
