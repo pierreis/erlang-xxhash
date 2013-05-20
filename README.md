@@ -1,9 +1,7 @@
-erlang-xxhash
+erlang-xxhash [![Build Status](https://travis-ci.org/pierresforge/erlang-xxhash.png)](https://travis-ci.org/pierresforge/erlang-xxhash)
 =============
 
-[![Build Status](https://travis-ci.org/pierresforge/erlang-xxhash.png)](https://travis-ci.org/pierresforge/erlang-xxhash)
-
-xxHash bindings for Erlang
+Simple Erlang wrapper for the [xxHash](http://code.google.com/p/xxhash/) algorithm.
 
 
 Usage
