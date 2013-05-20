@@ -132,10 +132,12 @@ hash32_overlapping_handles_test() ->
   Handle1 = hash32_init(50),
   Handle2 = hash32_init(50),
   ok = hash32_update(Handle1, <<"Foo">>),
-  ok = hash32_update(Handle2, <<"Bar">>),
-  Hash1 = hash32_final(Handle1),
-  Hash2 = hash32_final(Handle2),
-  ?assertNot(Hash1 == Hash2).
+  Hash1 = hash32_digest(Handle1),
+  Hash2 = hash32_digest(Handle2),
+  ?assertNot(Hash1 == Hash2),
+  ok = hash32_update(Handle2, <<"Foo">>),
+  Hash3 = hash32_digest(Handle2),
+  ?assertEqual(Hash1, Hash3).
 
 hash32_seed2_test() ->
   Hash1 = hash32(<<"FooBar">>, 50),
