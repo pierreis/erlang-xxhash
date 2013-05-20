@@ -1,6 +1,6 @@
 %%% @author Pierre Matri  <pierre@matri.me>
 %%%
-%%% @copyright 2013 Pierre Matri, All rights reserved. Open source, BSD License.
+%%% @copyright 2013 Pierre Matri, All rights reserved. Open source, MIT License.
 %%% @version 0.1.0
 
 -module(xxhash).
@@ -58,16 +58,8 @@ hash32_final_impl(_Context) ->
 hash32(Data) ->
   hash32(Data, ?DEFAULT_SEED).
 
-hash32(Data, Seed) when is_binary(Data) andalso is_integer(Seed) ->
-  hash32_impl(Data, Seed);
-hash32(Data, Seed) when is_list(Data) andalso is_integer(Seed) ->
-  hash32_impl(list_to_binary(Data), Seed);
-hash32(Data, Seed) when is_atom(Data) andalso is_integer(Seed) ->
-  hash32_impl(atom_to_binary(Data, utf8), Seed);
-hash32(Data, Seed) when is_integer(Data) andalso is_integer(Seed) ->
-  hash32_impl(list_to_binary(integer_to_list(Data)), Seed);
-hash32(Data, Seed) when is_float(Data) andalso is_integer(Seed) ->
-  hash32_impl(<<Data/float>>, Seed).
+hash32(Data, Seed) when is_integer(Seed) ->
+  hash32_impl(supported_to_binary(Data), Seed).
 
 hash32_init() ->
   hash32_init(?DEFAULT_SEED).
@@ -75,11 +67,29 @@ hash32_init() ->
 hash32_init(Seed) when is_integer(Seed) ->
   hash32_init_impl(Seed).
 
-hash32_update(Context, Data) when is_binary(Data) andalso is_binary(Context) ->
-  hash32_update_impl(Context, Data).
+hash32_update(Context, Data) when is_binary(Context) ->
+  hash32_update_impl(Context, supported_to_binary(Data)).
+
 
 hash32_final(Context) when is_binary(Context) ->
   hash32_final_impl(Context).
+
+
+%%%=============================================================================
+%%% Helpers
+%%%=============================================================================
+
+supported_to_binary(Data) when is_binary(Data) ->
+  Data;
+supported_to_binary(Data) when is_list(Data) ->
+  list_to_binary(Data);
+supported_to_binary(Data) when is_atom(Data) ->
+  term_to_binary(Data);
+supported_to_binary(Data) when is_integer(Data) ->
+  list_to_binary(integer_to_list(Data));
+supported_to_binary(Data) when is_float(Data) ->
+  <<Data/float>>.
+
 
 %%%=============================================================================
 %%% Tests
