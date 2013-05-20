@@ -21,6 +21,8 @@ static ERL_NIF_TERM nif_hash32_init(ErlNifEnv *env, int argc,
   const ERL_NIF_TERM argv[]);
 static ERL_NIF_TERM nif_hash32_update(ErlNifEnv *env, int argc,
   const ERL_NIF_TERM argv[]);
+static ERL_NIF_TERM nif_hash32_digest(ErlNifEnv *env, int argc,
+  const ERL_NIF_TERM argv[]);
 static ERL_NIF_TERM nif_hash32_final(ErlNifEnv *env, int argc,
   const ERL_NIF_TERM argv[]);
 
@@ -30,6 +32,7 @@ static ErlNifFunc nif_funcs[] = {
   {"hash32_impl", 2, nif_hash32},
   {"hash32_init_impl", 1, nif_hash32_init},
   {"hash32_update_impl", 2, nif_hash32_update},
+  {"hash32_digest_impl", 1, nif_hash32_digest},
   {"hash32_final_impl", 1, nif_hash32_final}
 };
 
@@ -91,6 +94,21 @@ nif_hash32_update(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
 }
 
 static ERL_NIF_TERM
+nif_hash32_digest(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
+  handle_t* handle;
+  unsigned int hash;
+  UNUSED(argc);
+
+  if (!enif_get_resource(env, argv[0], xxhash_handle, (void **) &handle)) {
+    return enif_make_badarg(env);
+  }
+
+  hash = XXH32_intermediateDigest(handle->instance);
+
+  return enif_make_uint(env, hash);
+}
+
+static ERL_NIF_TERM
 nif_hash32_final(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
   handle_t* handle;
   unsigned int hash;
@@ -104,8 +122,6 @@ nif_hash32_final(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
 
   return enif_make_uint(env, hash);
 }
-
-
 
 
 // Loading and cleaning stuff.
