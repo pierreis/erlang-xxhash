@@ -2,3 +2,6 @@
 .ebin
 *.beam
 .DS*
+.eunit
+priv
+ebin
