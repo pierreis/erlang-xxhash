@@ -18,6 +18,9 @@ Seed = 12345.
 xxhash:hash32(Text, Seed).               % => 3834992036
 xxhash:hash32(Text).                     % => 1042293711
 
+xxhash:hash64(Text, Seed).               % => 7624679986283906467
+xxhash:hash32(Text).                     % => 5754696928334414137
+
 
 %% Advanced usage
 
@@ -28,7 +31,16 @@ xxhash:hash32_update(Handle, <<"Foo">>). % Support for binary values.
 xxhash:hash32_update(Handle, 42).        % Support for integers.
 xxhash:hash32_update(Handle, 13.37).     % Support for floats.
 xxhash:hash32_update(Handle, moo).       % Support for atoms.
-xxhash:hash32_final(Handle).             % => 2767242439 (Final digest)
+xxhash:hash32_digest(Handle).            % => 3243777239
+
+Handle = xxhash:hash64_init(Seed).
+xxhash:hash64_update(Handle, Text).      % => ok
+xxhash:hash64_digest(Handle).            % => 3834992036 (Intermediate digest)
+xxhash:hash64_update(Handle, <<"Foo">>). % Support for binary values.
+xxhash:hash64_update(Handle, 42).        % Support for integers.
+xxhash:hash64_update(Handle, 13.37).     % Support for floats.
+xxhash:hash64_update(Handle, moo).       % Support for atoms.
+xxhash:hash64_digest(Handle).            % => 3243777239
 ```
 
 

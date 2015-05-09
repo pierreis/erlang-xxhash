@@ -10,7 +10,10 @@
 
 -export([hash32/1, hash32/2,
          hash32_init/0, hash32_init/1,
-         hash32_update/2, hash32_digest/1, hash32_final/1]).
+         hash32_update/2, hash32_digest/1,
+         hash64/1, hash64/2,
+         hash64_init/0, hash64_init/1,
+         hash64_update/2, hash64_digest/1]).
 
 -on_load(init/0).
 
@@ -62,7 +65,16 @@ hash32_update_impl(_Handle, _Data) ->
 hash32_digest_impl(_Handle) ->
   ?nif_stub.
 
-hash32_final_impl(_Handle) ->
+hash64_impl(_Data, _Seed) ->
+  ?nif_stub.
+
+hash64_init_impl(_Seed) ->
+  ?nif_stub.
+
+hash64_update_impl(_Handle, _Data) ->
+  ?nif_stub.
+
+hash64_digest_impl(_Handle) ->
   ?nif_stub.
 
 
@@ -115,9 +127,7 @@ hash32_update(Handle, Data) when is_binary(Handle) ->
   hash32_update_impl(Handle, supported_to_binary(Data)).
 
 
-%% @doc Calculates an intermediate digest of all the passed data to the
-%%      `Handle' hasher. Unlike {@link hash32_final/1}, the hasher can still
-%%      be used after {@link hash32_digest/1} has been called.
+%% @doc Calculates a digest of all the passed data to the `Handle' hasher.
 
 -spec hash32_digest(Handle::hash_handle()) -> hash_digest().
 
@@ -125,14 +135,57 @@ hash32_digest(Handle) when is_binary(Handle) ->
   hash32_digest_impl(Handle).
 
 
-%% @doc Calculates the final hash of all the passed data to the `Handle'
-%%      hasher. Unlike {@link hash32_digest/1}, the hasher is destroyed and
-%%      can't be used after {@link hash32_final/1} has been called.
+%% @doc Hash `Data' with a default seed value, and return the digest.
+%% @see hash64/2
 
--spec hash32_final(Handle::hash_handle()) -> hash_digest().
+-spec hash64(Data::hash_input()) -> hash_digest().
 
-hash32_final(Handle) when is_binary(Handle) ->
-  hash32_final_impl(Handle).
+hash64(Data) ->
+  hash64(Data, ?DEFAULT_SEED).
+
+
+%% @doc Hash `Data' with `Seed' value, and return the digest.
+%% @see hash64/1
+
+-spec hash64(Data::hash_input(), Seed::hash_seed()) -> hash_digest().
+
+hash64(Data, Seed) when is_integer(Seed) ->
+  hash64_impl(supported_to_binary(Data), Seed).
+
+
+%% @doc Initialize a hasher with a default seed value, and return an handle.
+%% @see hash64_init/1
+
+-spec hash64_init() -> hash_handle().
+
+hash64_init() ->
+  hash64_init(?DEFAULT_SEED).
+
+
+%% @doc Initialize a hasher with `Seed' value, and return an handle.
+%% @see hash64_init/0
+
+-spec hash64_init(Seed::hash_seed()) -> hash_handle().
+
+hash64_init(Seed) when is_integer(Seed) ->
+  hash64_init_impl(Seed).
+
+
+%% @doc Update the `Handle' hasher content with the given `Data'. This can be
+%%      called many times with new data as it is streamed.
+
+-spec hash64_update(Handle::hash_handle(), Data::hash_input()) -> ok.
+
+hash64_update(Handle, Data) when is_binary(Handle) ->
+  hash64_update_impl(Handle, supported_to_binary(Data)).
+
+
+%% @doc Calculates a digest of all the passed data to the `Handle' hasher.
+
+-spec hash64_digest(Handle::hash_handle()) -> hash_digest().
+
+hash64_digest(Handle) when is_binary(Handle) ->
+  hash64_digest_impl(Handle).
 
 
 %%%=============================================================================
@@ -164,7 +217,7 @@ hash32_test() ->
   Handle = hash32_init(),
   ok = hash32_update(Handle, <<"Foo">>),
   ok = hash32_update(Handle, <<"Bar">>),
-  Hash2 = hash32_final(Handle),
+  Hash2 = hash32_digest(Handle),
   ?assertEqual(Hash1, Hash2).
 
 hash32_seed_test() ->
@@ -172,7 +225,7 @@ hash32_seed_test() ->
   Handle = hash32_init(50),
   ok = hash32_update(Handle, <<"Foo">>),
   ok = hash32_update(Handle, <<"Bar">>),
-  Hash2 = hash32_final(Handle),
+  Hash2 = hash32_digest(Handle),
   ?assertEqual(Hash1, Hash2).
 
 hash32_intermediate_result_test() ->
@@ -180,7 +233,7 @@ hash32_intermediate_result_test() ->
   ok = hash32_update(Handle, <<"Foo">>),
   Hash1 = hash32_digest(Handle),
   ok = hash32_update(Handle, <<"Bar">>),
-  Hash2 = hash32_final(Handle),
+  Hash2 = hash32_digest(Handle),
   ?assertNot(Hash1 == Hash2).
 
 hash32_overlapping_handles_test() ->
@@ -217,6 +270,66 @@ hash32_int_test() ->
 hash32_float_test() ->
   Hash1 = hash32(5.98),
   Hash2 = hash32(5.97),
+  ?assertNot(Hash1 == Hash2).
+
+hash64_test() ->
+  Hash1 = hash64(<<"FooBar">>),
+  Handle = hash64_init(),
+  ok = hash64_update(Handle, <<"Foo">>),
+  ok = hash64_update(Handle, <<"Bar">>),
+  Hash2 = hash64_digest(Handle),
+  ?assertEqual(Hash1, Hash2).
+
+hash64_seed_test() ->
+  Hash1 = hash64(<<"FooBar">>, 50),
+  Handle = hash64_init(50),
+  ok = hash64_update(Handle, <<"Foo">>),
+  ok = hash64_update(Handle, <<"Bar">>),
+  Hash2 = hash64_digest(Handle),
+  ?assertEqual(Hash1, Hash2).
+
+hash64_intermediate_result_test() ->
+  Handle = hash64_init(50),
+  ok = hash64_update(Handle, <<"Foo">>),
+  Hash1 = hash64_digest(Handle),
+  ok = hash64_update(Handle, <<"Bar">>),
+  Hash2 = hash64_digest(Handle),
+  ?assertNot(Hash1 == Hash2).
+
+hash64_overlapping_handles_test() ->
+  Handle1 = hash64_init(50),
+  Handle2 = hash64_init(50),
+  ok = hash64_update(Handle1, <<"Foo">>),
+  Hash1 = hash64_digest(Handle1),
+  Hash2 = hash64_digest(Handle2),
+  ?assertNot(Hash1 == Hash2),
+  ok = hash64_update(Handle2, <<"Foo">>),
+  Hash3 = hash64_digest(Handle2),
+  ?assertEqual(Hash1, Hash3).
+
+hash64_seed2_test() ->
+  Hash1 = hash64(<<"FooBar">>, 50),
+  Hash2 = hash64(<<"FooBar">>),
+  ?assertNot(Hash1 == Hash2).
+
+hash64_list_test() ->
+  Hash1 = hash64([1, 42]),
+  Hash2 = hash64([1, 220]),
+  ?assertNot(Hash1 == Hash2).
+
+hash64_atom_test() ->
+  Hash1 = hash64(foo),
+  Hash2 = hash64(bar),
+  ?assertNot(Hash1 == Hash2).
+
+hash64_int_test() ->
+  Hash1 = hash64(42),
+  Hash2 = hash64(67),
+  ?assertNot(Hash1 == Hash2).
+
+hash64_float_test() ->
+  Hash1 = hash64(5.98),
+  Hash2 = hash64(5.97),
   ?assertNot(Hash1 == Hash2).
 
 -endif.
