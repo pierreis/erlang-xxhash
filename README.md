@@ -1,4 +1,4 @@
-erlang-xxhash [![Build Status](https://travis-ci.org/pierresforge/erlang-xxhash.png)](https://travis-ci.org/pierresforge/erlang-xxhash)
+erlang-xxhash [![Build Status](https://travis-ci.org/pierresforge/erlang-xxhash.svg?branch=master)](https://travis-ci.org/pierresforge/erlang-xxhash)
 =============
 
 Simple Erlang wrapper for the [xxHash](http://code.google.com/p/xxhash/) algorithm.
