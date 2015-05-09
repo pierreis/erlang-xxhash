@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #include "erl_nif.h"
 #include "xxhash.h"
 
@@ -31,14 +33,14 @@ static ERL_NIF_TERM nif_hash64_digest(ErlNifEnv *env, int argc,
 static ERL_NIF_TERM atom_ok;
 
 static ErlNifFunc nif_funcs[] = {
-  {"hash32_impl", 2, nif_hash32, 0},
-  {"hash32_init_impl", 1, nif_hash32_init, 0},
-  {"hash32_update_impl", 2, nif_hash32_update, 0},
-  {"hash32_digest_impl", 1, nif_hash32_digest, 0},
-  {"hash64_impl", 2, nif_hash64, 0},
-  {"hash64_init_impl", 1, nif_hash64_init, 0},
-  {"hash64_update_impl", 2, nif_hash64_update, 0},
-  {"hash64_digest_impl", 1, nif_hash64_digest, 0}
+  {"hash32_impl", 2, nif_hash32},
+  {"hash32_init_impl", 1, nif_hash32_init},
+  {"hash32_update_impl", 2, nif_hash32_update},
+  {"hash32_digest_impl", 1, nif_hash32_digest},
+  {"hash64_impl", 2, nif_hash64},
+  {"hash64_init_impl", 1, nif_hash64_init},
+  {"hash64_update_impl", 2, nif_hash64_update},
+  {"hash64_digest_impl", 1, nif_hash64_digest}
 };
 
 static ErlNifResourceType *xxhash_handle;
