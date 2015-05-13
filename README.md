@@ -51,5 +51,5 @@ xxHash library is distributed under New BSD License.
 
 ## Bug reports and feature requests
 
-You are very welcome to contribute to Testbench. To do so, simply report bugs, submit feature requests or
+You are very welcome to contribute to this library. To do so, simply report bugs, submit feature requests or
 make pull requests on Github: https://github.com/pierresforge/erlang-xxhash.
