@@ -1,11 +1,9 @@
-erlang-xxhash [![Build Status](https://travis-ci.org/pierresforge/erlang-xxhash.svg?branch=master)](https://travis-ci.org/pierresforge/erlang-xxhash)
-=============
+# erlang-xxhash [![Build Status](https://travis-ci.org/pierresforge/erlang-xxhash.svg?branch=master)](https://travis-ci.org/pierresforge/erlang-xxhash)
 
 Simple Erlang wrapper for the [xxHash](http://code.google.com/p/xxhash/) algorithm.
 
 
-Usage
------
+## Usage
 
 ```erlang
 application:start(xxhash).
@@ -44,15 +42,14 @@ xxhash:hash64_digest(Handle64).            % => 10617254975351441063
 ```
 
 
-Licenses
---------
+## Licenses
 
 This program is distributed under the MIT License.
 
 xxHash library is distributed under New BSD License.
 
 
-Author
-------
+## Bug reports and feature requests
 
-Pierre Matri <pierre@matri.me>
+You are very welcome to contribute to Testbench. To do so, simply report bugs, submit feature requests or
+make pull requests on Github: https://github.com/pierresforge/erlang-xxhash.
