@@ -68,7 +68,7 @@ nif_hash32(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
 
 static ERL_NIF_TERM
 nif_hash32_init(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
-  XXH32_state_t *state = enif_alloc_resource(xxhash_handle, sizeof(XXH32_state_t));
+  XXH32_state_t *state = enif_alloc_resource(xxhash_handle, sizeof(XXH32_stateBody_t));
   unsigned int seed;
   ERL_NIF_TERM term;
   UNUSED(argc);
@@ -128,7 +128,7 @@ nif_hash64(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
 
 static ERL_NIF_TERM
 nif_hash64_init(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
-  XXH64_state_t *state = enif_alloc_resource(xxhash_handle, sizeof(XXH64_state_t));
+  XXH64_state_t *state = enif_alloc_resource(xxhash_handle, sizeof(XXH64_stateBody_t));
   ErlNifUInt64 seed;
   ERL_NIF_TERM term;
   UNUSED(argc);
