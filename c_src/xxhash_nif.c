@@ -77,6 +77,7 @@ nif_hash32_init(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
   }
   XXH32_reset(state, seed);
   term = enif_make_resource(env, state);
+  enif_release_resource(state);
   return term;
 }
 
@@ -137,6 +138,7 @@ nif_hash64_init(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
   }
   XXH64_reset(state, seed);
   term = enif_make_resource(env, state);
+  enif_release_resource(state);
   return term;
 }
 
