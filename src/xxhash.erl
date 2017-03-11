@@ -46,7 +46,7 @@ init() ->
                       Path
               end,
 
-    erlang:load_nif(filename:join(PrivDir, xxhash_nif), 0).
+    erlang:load_nif(filename:join(PrivDir, xxhash), 0).
 
 
 %%%=============================================================================
