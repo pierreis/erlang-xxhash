@@ -17,9 +17,9 @@ C_SRC_OUTPUT ?= $(CURDIR)/../priv/$(PROJECT).so
 UNAME_SYS := $(shell uname -s)
 ifeq ($(UNAME_SYS), Darwin)
 	CC ?= cc
-	CFLAGS ?= -O3 -std=c99 -arch x86_64 -Wall -W -Wundef -Wmissing-prototypes -Wno-implicit-function-declaration
-	CXXFLAGS ?= -O3 -arch x86_64 -Wall -W -Wundef -Wno-implicit-function-declaration
-	LDFLAGS ?= -arch x86_64 -flat_namespace -undefined suppress
+	CFLAGS ?= -O3 -std=c99 -Wall -W -Wundef -Wmissing-prototypes -Wno-implicit-function-declaration
+	CXXFLAGS ?= -O3 -Wall -W -Wundef -Wno-implicit-function-declaration
+	LDFLAGS ?= -flat_namespace -undefined suppress
 else ifeq ($(UNAME_SYS), FreeBSD)
 	CC ?= cc
 	CFLAGS ?= -O3 -std=c99 -Wall -Wmissing-prototypes -Wno-implicit-function-declaration
